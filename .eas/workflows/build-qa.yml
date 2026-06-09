@@ -1,0 +1,27 @@
+name: QA Android Build
+
+on:
+  push:
+    branches: ['qa']
+
+jobs:
+  build_android:
+    type: build
+    params:
+      platform: android
+      profile: qa
+
+  notify_slack:
+    type: slack
+    after:
+      - build_android
+    params:
+      webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
+      message: |
+        ✅ *QA Android Build Complete!*
+        *Project:* AwesomeProject
+        *Environment:* QA
+        *Branch:* ${{ github.ref_name }}
+        *Build Number:* ${{ needs.build_android.outputs.app_build_version }}
+        *Triggered by:* avisek@york.ie
+        *<https://expo.dev/accounts/avisek05/projects/awesomeproject/builds/${{ needs.build_android.outputs.build_id }}|📲 Download APK>*
